@@ -3,11 +3,31 @@ import re
 
 class Graph:
     def __init__(self):
-        self.vertices = set()
+        self.head = None
 
-    def add(self, id):
-        setContainsValue = False
-        
+    #Have to set add up so that it respects only unique vertices like sets are supposed to do
+    def add(self, ids):
+        lastVertex = None
+        for id in ids:
+            setContainsValue = False
+            thisVertex = None
+            for vertex in self.vertices:
+                if id == vertex.id:
+                    setContainsValue = True
+                    thisVertex = vertex
+                    break
+
+            if not setContainsValue:
+                thisVertex = Vertex(id)
+                self.vertices.add(thisVertex)
+
+            if lastVertex != None:
+                lastVertex.addEdge(thisVertex)
+
+            lastVertex = thisVertex
+
+    def findNextWord(self, word):
+
 
 class Vertex:
     def __init__(self, id):
@@ -54,12 +74,12 @@ def process_file(infile):
     # loop over the cleaned titles and compute the bigram counts
     # I ended up using a custom built directional graph to track the occurence of words, it seemed easiest to build the extra
     # credit assignment that way since we can hold the value as the weight of the edge between them and simply follow the
-    # heaviest path n jumps to get the generated song title, plus bfs makes it relatively quick to search.
+    # heaviest path n jumps to get the generated song title. It's a sort of pseudo-graph, but it works for what we need it for.
     wordGraph = Graph()
     for title in titles:
         words = title.split()
-        for word in words:
-            print(word)
+        wordGraph.add(words)
+        print('Success!')
 
 
     # using bigram_count, find most common word following 'word'
